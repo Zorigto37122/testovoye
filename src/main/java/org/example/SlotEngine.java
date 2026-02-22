@@ -135,8 +135,6 @@ public class SlotEngine {
             line[1] = slot[1][payLine[1]];
             line[2] = slot[2][payLine[2]];
 
-            System.out.println(line[0] + " " + line[1] + " " + line[2]);
-
             int currPay = 0;
 
             int three = threeOfKind(line[0], line[1], line[2]);
