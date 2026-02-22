@@ -4,14 +4,11 @@ import java.net.URISyntaxException;
 
 public class Main {
     public static void main(String[] args) {
-        int[][] arr = SlotEngine.spin();
 
-        for (int i = 0; i < arr.length; i++) {
-            System.out.print("Reel " + i + ": ");
-            for (int j = 0; j < arr.length; j++) {
-                System.out.print(arr[i][j] + " ");
-            }
-            System.out.println();
+        for (int i = 0; i < 5; i++) {
+            int[][] slot = SlotEngine.spin();
+            SlotEngine.printSlot(slot);
+            System.out.println("Pay: " + SlotEngine.checkPaylines(slot) + "\n");
         }
 
     }
