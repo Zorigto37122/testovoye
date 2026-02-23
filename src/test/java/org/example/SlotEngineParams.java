@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitParamsRunner.class)
-public class slotEngineParams {
+public class SlotEngineParams {
     private static Object[] testPaylinesValues() {
         return new Object[] {
                 new Object[] {new int[][]{
@@ -34,7 +34,7 @@ public class slotEngineParams {
                         {1, 9, 9},
                         {9, 1, 9},
                         {9, 9, 1}
-                }, 27},
+                }, 26},
 
         };
     }
@@ -43,8 +43,7 @@ public class slotEngineParams {
     @Parameters(method = "testPaylinesValues")
     public void testPaylines(int[][] slot, int exp) {
         SlotEngine engine = new SlotEngine();
-        engine.setSlot(slot);
-        Assert.assertEquals("Paylines got wrong", exp, engine.calcPaylines());
+        Assert.assertEquals("Paylines got wrong", exp, engine.calcPaylines(slot));
     }
 
 

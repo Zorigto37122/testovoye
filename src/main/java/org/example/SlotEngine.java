@@ -1,12 +1,10 @@
 package org.example;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class SlotEngine {
-    private final int[][] REELS = {
+    private static final int[][] REELS = {
             {
                     1, 8, 6, 9, 5, 6, 1, 8, 6, 7,
                     7, 6, 2, 5, 8, 6, 7, 5, 3, 8,
@@ -39,7 +37,7 @@ public class SlotEngine {
             }
     };
 
-    private Map<Integer, String> symbolsMap = new HashMap<Integer, String>() {{
+    private static Map<Integer, String> symbolsMap = new HashMap<Integer, String>() {{
         put(0, "WI");
         put(1, "H1");
         put(2, "M1");
@@ -52,7 +50,7 @@ public class SlotEngine {
         put(9, "EM");
     }};
 
-    private final int[][] payLines = {
+    private static final int[][] payLines = {
             {0, 0, 0},
             {1, 1, 1},
             {2, 2, 2},
@@ -73,11 +71,7 @@ public class SlotEngine {
         put(9, new int[]{0, 0, 0});
     }};
 
-    private int[][] slot;
-
-    public void setSlot(int[][] slot) {
-        this.slot = slot;
-    }
+    private static final int WILD_CODE = 0;
 
     public void printSlot(int[][] slot) {
         for (int i = 0; i < slot.length; i++) {
@@ -89,26 +83,28 @@ public class SlotEngine {
         }
     }
 
-    static private int threeOfKind(int[] arr) {
-        int value = -1;
+    private int[] getLineSymbolAndLength(int[] arr) {
+        int symbolCode = -1;
+        int i = 0;
 
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] != 0) {
-                if (value >= 0 && arr[i] != value) {
-                    return -1;
+        do {
+            if (arr[i] != WILD_CODE) {
+                if (symbolCode >= 0 && arr[i] != symbolCode) {
+                    return new int[] {symbolCode, i};
                 }
-                value = arr[i];
+                symbolCode = arr[i];
             }
-        }
+            i++;
+        } while (i < arr.length);
 
-        if (value == -1) {
-            return 0;
+        if (symbolCode == -1) {
+            symbolCode = WILD_CODE;
         }
-        return value;
+        return new int[] {symbolCode, i};
     }
 
-    public void spin() {
-        slot = new int[3][3];
+    public int[][] spin() {
+        int[][] slot = new int[3][3];
         int reelLen = REELS[0].length;
 
         for (int i = 0; i < 3; i++) {
@@ -127,9 +123,11 @@ public class SlotEngine {
                 slot[i][2] = REELS[i][0];
             }
         }
+
+        return slot;
     }
 
-    public int calcPaylines() {
+    public int calcPaylines(int[][] slot) {
         int pay = 0;
 
         for (int[] payLine : payLines) {
@@ -139,26 +137,9 @@ public class SlotEngine {
             line[1] = slot[1][payLine[1]];
             line[2] = slot[2][payLine[2]];
 
-            int currPay = 0;
+            int[] symbolAndLength = getLineSymbolAndLength(line);
 
-            int three = threeOfKind(line);
-
-            if (three >= 0) {
-                currPay += payTable.get(three)[2];
-            } else if (line[0] == line[1]) { // couples
-                currPay += payTable.get(line[0])[1];
-            } else if (line[0] == 0) {
-                currPay += payTable.get(line[1])[1];
-            } else if (line[1] == 0) {
-                currPay += payTable.get(line[0])[1];
-            } else {
-                currPay += payTable.get(line[0])[0];
-//                for (int l : line) { // singles
-//                    currPay += payTable.get(l)[0];
-//                }
-            }
-
-            pay += currPay;
+            pay += payTable.get(symbolAndLength[0])[symbolAndLength[1] - 1];
         }
 
         return pay;

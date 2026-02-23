@@ -9,13 +9,13 @@ public class MathTest {
 
         for (int i = 0; i < iterations; i++) {
             totalBet += 5;
-            eng.spin();
-            int currWin = eng.calcPaylines();
+            int currWin = eng.calcPaylines(eng.spin());
 
             if (currWin > 0) {
                 totalWinCount += 1;
                 totalWin += currWin;
             }
+            //System.out.println(currWin + "\n");
         }
 
         System.out.println("Total Bet: " + totalBet);
