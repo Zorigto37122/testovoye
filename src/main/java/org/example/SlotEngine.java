@@ -1,10 +1,12 @@
 package org.example;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class SlotEngine {
-    static private final int[][] REELS = {
+    private final int[][] REELS = {
             {
                     1, 8, 6, 9, 5, 6, 1, 8, 6, 7,
                     7, 6, 2, 5, 8, 6, 7, 5, 3, 8,
@@ -37,7 +39,7 @@ public class SlotEngine {
             }
     };
 
-    static private Map<Integer, String> symbolsMap = new HashMap<Integer, String>() {{
+    private Map<Integer, String> symbolsMap = new HashMap<Integer, String>() {{
         put(0, "WI");
         put(1, "H1");
         put(2, "M1");
@@ -50,7 +52,7 @@ public class SlotEngine {
         put(9, "EM");
     }};
 
-    static private final int[][] payLines = {
+    private final int[][] payLines = {
             {0, 0, 0},
             {1, 1, 1},
             {2, 2, 2},
@@ -58,7 +60,7 @@ public class SlotEngine {
             {2, 1, 0}
     };
 
-    static private Map<Integer, int[]> payTable = new HashMap<Integer, int[]>() {{
+    private Map<Integer, int[]> payTable = new HashMap<Integer, int[]>() {{
         put(0, new int[]{0, 0, 50});
         put(1, new int[]{1, 10, 25});
         put(2, new int[]{0, 5, 15});
@@ -71,7 +73,13 @@ public class SlotEngine {
         put(9, new int[]{0, 0, 0});
     }};
 
-    public static void printSlot(int[][] slot) {
+    private int[][] slot;
+
+    public void setSlot(int[][] slot) {
+        this.slot = slot;
+    }
+
+    public void printSlot(int[][] slot) {
         for (int i = 0; i < slot.length; i++) {
             System.out.print("Reel " + i + ": ");
             for (int j = 0; j < slot.length; j++) {
@@ -81,28 +89,26 @@ public class SlotEngine {
         }
     }
 
-    public static int threeOfKind(int a, int b, int c) {
-        if (a == b && b == c) {
-            return a;
-        } else if (a == 0 && b == c) {
-            return b;
-        } else if (a == b && c == 0) {
-            return a;
-        } else if (a == c && b == 0) {
-            return a;
-        } else if (a == 0 && b == 0) {
-            return c;
-        } else if (a == 0 && c == 0) {
-            return b;
-        } else if (b == 0 && c == 0) {
-            return a;
-        } else {
-            return -1;
+    static private int threeOfKind(int[] arr) {
+        int value = -1;
+
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] != 0) {
+                if (value >= 0 && arr[i] != value) {
+                    return -1;
+                }
+                value = arr[i];
+            }
         }
+
+        if (value == -1) {
+            return 0;
+        }
+        return value;
     }
 
-    public static int[][] spin() {
-        int[][] slot = new int[3][3];
+    public void spin() {
+        slot = new int[3][3];
         int reelLen = REELS[0].length;
 
         for (int i = 0; i < 3; i++) {
@@ -121,11 +127,9 @@ public class SlotEngine {
                 slot[i][2] = REELS[i][0];
             }
         }
-
-        return slot;
     }
 
-    public static int checkPaylines(int[][] slot) {
+    public int calcPaylines() {
         int pay = 0;
 
         for (int[] payLine : payLines) {
@@ -137,18 +141,21 @@ public class SlotEngine {
 
             int currPay = 0;
 
-            int three = threeOfKind(line[0], line[1], line[2]);
+            int three = threeOfKind(line);
 
-            if (three >= 0) { // тройки
+            if (three >= 0) {
                 currPay += payTable.get(three)[2];
-            } else if (line[0] == line[1]) { // пары
+            } else if (line[0] == line[1]) { // couples
                 currPay += payTable.get(line[0])[1];
-            } else if (line[1] == line[2]) { // пары
+            } else if (line[0] == 0) {
                 currPay += payTable.get(line[1])[1];
+            } else if (line[1] == 0) {
+                currPay += payTable.get(line[0])[1];
             } else {
-                for (int l : line) { // одиночные
-                    pay += payTable.get(l)[0];
-                }
+                currPay += payTable.get(line[0])[0];
+//                for (int l : line) { // singles
+//                    currPay += payTable.get(l)[0];
+//                }
             }
 
             pay += currPay;
