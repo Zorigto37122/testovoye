@@ -74,24 +74,26 @@ public class SlotEngine {
         }
     }
 
-    private int[] getLineSymbolAndLength(int[] line) {
-        int symbolCode = -1;
-        int currPos = 0;
-
-        do {
-            if (line[currPos] != WILD_CODE) {
-                if (symbolCode >= 0 && line[currPos] != symbolCode) {
-                    return new int[] {symbolCode, currPos};
-                }
-                symbolCode = line[currPos];
+    private int getTargetSymbol(int[] line) {
+        for (int symbol : line) {
+            if (symbol != WILD_CODE) {
+                return symbol;
             }
-            currPos++;
-        } while (currPos < line.length);
-
-        if (symbolCode == -1) {
-            symbolCode = WILD_CODE;
         }
-        return new int[] {symbolCode, currPos};
+        return WILD_CODE;
+    }
+
+    private int getSequenceLength(int[] line, int targetSymbol) {
+        if (targetSymbol == WILD_CODE) {
+            return line.length;
+        }
+
+        for (int currPos = 0; currPos < line.length; currPos++) {
+            if (line[currPos] != WILD_CODE && line[currPos] != targetSymbol) {
+                return currPos;
+            }
+        }
+        return line.length;
     }
 
     public int[][] spin() {
@@ -123,15 +125,16 @@ public class SlotEngine {
         int pay = 0;
 
         for (int[] payLine : payLines) {
-            int[] line = new int[ROWS];
+            int[] line = new int[payLine.length];
 
             line[0] = slot[0][payLine[0]];
             line[1] = slot[1][payLine[1]];
             line[2] = slot[2][payLine[2]];
 
-            int[] symbolAndLength = getLineSymbolAndLength(line);
+            int targetSymbol = getTargetSymbol(line);
+            int seqLength = getSequenceLength(line, targetSymbol);
 
-            pay += PAY_TABLE.get(symbolAndLength[0])[symbolAndLength[1] - 1];
+            pay += PAY_TABLE.get(targetSymbol)[seqLength - 1];
         }
 
         return pay;
