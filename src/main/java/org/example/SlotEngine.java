@@ -2,9 +2,15 @@ package org.example;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class SlotEngine {
-    private static final int[][] REELS = {
+    private static final int NUMBER_OF_LINES = 5;
+    private static final int REELS = 3;
+    private static final int ROWS = 3;
+    private static final int WILD_CODE = 0;
+
+    private static final int[][] REEL_STRIPS = {
             {
                     1, 8, 6, 9, 5, 6, 1, 8, 6, 7,
                     7, 6, 2, 5, 8, 6, 7, 5, 3, 8,
@@ -37,19 +43,6 @@ public class SlotEngine {
             }
     };
 
-    private static Map<Integer, String> SYMBOLS_MAP = new HashMap<Integer, String>() {{
-        put(0, "WI");
-        put(1, "H1");
-        put(2, "M1");
-        put(3, "M2");
-        put(4, "M3");
-        put(5, "L1");
-        put(6, "L2");
-        put(7, "L3");
-        put(8, "L4");
-        put(9, "EM");
-    }};
-
     private static final int[][] payLines = {
             {0, 0, 0},
             {1, 1, 1},
@@ -71,67 +64,66 @@ public class SlotEngine {
         put(9, new int[]{0, 0, 0});
     }};
 
-    private static final int WILD_CODE = 0;
-
     public void printSlot(int[][] slot) {
-        for (int i = 0; i < slot.length; i++) {
-            System.out.print("Reel " + i + ": ");
-            for (int j = 0; j < slot.length; j++) {
-                System.out.print(slot[i][j] + " ");
+        for (int currReel = 0; currReel < REELS; currReel++) {
+            System.out.print("Reel " + currReel + ": ");
+            for (int j = 0; j < ROWS; j++) {
+                System.out.print(slot[currReel][j] + " ");
             }
             System.out.println();
         }
     }
 
-    private int[] getLineSymbolAndLength(int[] arr) {
+    private int[] getLineSymbolAndLength(int[] line) {
         int symbolCode = -1;
-        int i = 0;
+        int currPos = 0;
 
         do {
-            if (arr[i] != WILD_CODE) {
-                if (symbolCode >= 0 && arr[i] != symbolCode) {
-                    return new int[] {symbolCode, i};
+            if (line[currPos] != WILD_CODE) {
+                if (symbolCode >= 0 && line[currPos] != symbolCode) {
+                    return new int[] {symbolCode, currPos};
                 }
-                symbolCode = arr[i];
+                symbolCode = line[currPos];
             }
-            i++;
-        } while (i < arr.length);
+            currPos++;
+        } while (currPos < line.length);
 
         if (symbolCode == -1) {
             symbolCode = WILD_CODE;
         }
-        return new int[] {symbolCode, i};
+        return new int[] {symbolCode, currPos};
     }
 
     public int[][] spin() {
-        int[][] slot = new int[3][3];
-        int reelLen = REELS[0].length;
+        int[][] slot = new int[REELS][ROWS];
+        int reelLen = REEL_STRIPS[0].length;
+        Random random = new Random();
 
-        for (int i = 0; i < 3; i++) {
-            int R = (int) (Math.random() * (reelLen - 1));
+        for (int currReel = 0; currReel < 3; currReel++) {
+            int randomReelPos = random.nextInt(reelLen);
 
-            slot[i][1] = REELS[i][R];
+            slot[currReel][1] = REEL_STRIPS[currReel][randomReelPos];
 
-            if (R > 0 && R < reelLen - 1) {
-                slot[i][0] = REELS[i][R - 1];
-                slot[i][2] = REELS[i][R + 1];
-            } else if (R == 0) {
-                slot[i][0] = REELS[i][reelLen - 1];
-                slot[i][2] = REELS[i][R + 1];
+            if (randomReelPos > 0 && randomReelPos < reelLen - 1) {
+                slot[currReel][0] = REEL_STRIPS[currReel][randomReelPos - 1];
+                slot[currReel][2] = REEL_STRIPS[currReel][randomReelPos + 1];
+            } else if (randomReelPos == 0) {
+                slot[currReel][0] = REEL_STRIPS[currReel][reelLen - 1];
+                slot[currReel][2] = REEL_STRIPS[currReel][randomReelPos + 1];
             } else {
-                slot[i][0] = REELS[i][R - 1];
-                slot[i][2] = REELS[i][0];
+                slot[currReel][0] = REEL_STRIPS[currReel][randomReelPos - 1];
+                slot[currReel][2] = REEL_STRIPS[currReel][0];
             }
         }
 
         return slot;
     }
 
-    public int calcPaylines(int[][] slot) {
+    public int calculatePay(int[][] slot) {
         int pay = 0;
 
         for (int[] payLine : payLines) {
-            int[] line = new int[3];
+            int[] line = new int[ROWS];
 
             line[0] = slot[0][payLine[0]];
             line[1] = slot[1][payLine[1]];

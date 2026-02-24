@@ -43,7 +43,7 @@ public class TestSlotEngineParams {
     @Parameters(method = "testPaylinesValues")
     public void testPaylines(int[][] slot, int exp, String message) {
         SlotEngine engine = new SlotEngine();
-        Assert.assertEquals(message, exp, engine.calcPaylines(slot));
+        Assert.assertEquals(message, exp, engine.calculatePay(slot));
     }
 
 
