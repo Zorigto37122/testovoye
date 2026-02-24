@@ -37,7 +37,7 @@ public class SlotEngine {
             }
     };
 
-    private static Map<Integer, String> symbolsMap = new HashMap<Integer, String>() {{
+    private static Map<Integer, String> SYMBOLS_MAP = new HashMap<Integer, String>() {{
         put(0, "WI");
         put(1, "H1");
         put(2, "M1");
@@ -58,7 +58,7 @@ public class SlotEngine {
             {2, 1, 0}
     };
 
-    private Map<Integer, int[]> payTable = new HashMap<Integer, int[]>() {{
+    private Map<Integer, int[]> PAY_TABLE = new HashMap<Integer, int[]>() {{
         put(0, new int[]{0, 0, 50});
         put(1, new int[]{1, 10, 25});
         put(2, new int[]{0, 5, 15});
@@ -139,7 +139,7 @@ public class SlotEngine {
 
             int[] symbolAndLength = getLineSymbolAndLength(line);
 
-            pay += payTable.get(symbolAndLength[0])[symbolAndLength[1] - 1];
+            pay += PAY_TABLE.get(symbolAndLength[0])[symbolAndLength[1] - 1];
         }
 
         return pay;

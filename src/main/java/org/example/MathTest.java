@@ -15,12 +15,11 @@ public class MathTest {
                 totalWinCount += 1;
                 totalWin += currWin;
             }
-            //System.out.println(currWin + "\n");
         }
 
         System.out.println("Total Bet: " + totalBet);
         System.out.println("Total Win: " + totalWin);
-        System.out.println("Hit Rate: " + String.format("%.4f", (double) totalWinCount / iterations));
-        System.out.println("Return to Player (RTP): " + String.format("%.4f", (double) totalWin / totalBet));
+        System.out.println("Hit Rate: " + String.format("%.4f", (double) totalWinCount / iterations * 100));
+        System.out.println("Return to Player (RTP): " + String.format("%.4f", (double) totalWin / totalBet * 100));
     }
 }
