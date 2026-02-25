@@ -52,7 +52,7 @@ public class SlotEngine {
             {2, 1, 0}
     };
 
-    private Map<Integer, int[]> PAY_TABLE = new HashMap<Integer, int[]>() {{
+    private static Map<Integer, int[]> PAY_TABLE = new HashMap<Integer, int[]>() {{
         put(0, new int[]{0, 0, 50});
         put(1, new int[]{1, 10, 25});
         put(2, new int[]{0, 5, 15});
@@ -64,38 +64,6 @@ public class SlotEngine {
         put(8, new int[]{0, 0, 1});
         put(9, new int[]{0, 0, 0});
     }};
-
-    public void printSlot(int[][] slot) {
-        for (int currReel = 0; currReel < REELS; currReel++) {
-            System.out.print("Reel " + currReel + ": ");
-            for (int j = 0; j < ROWS; j++) {
-                System.out.print(slot[currReel][j] + " ");
-            }
-            System.out.println();
-        }
-    }
-
-    private int getTargetSymbol(int[] line) {
-        for (int symbol : line) {
-            if (symbol != WILD_CODE) {
-                return symbol;
-            }
-        }
-        return WILD_CODE;
-    }
-
-    private int getSequenceLength(int[] line, int targetSymbol) {
-        if (targetSymbol == WILD_CODE) {
-            return line.length;
-        }
-
-        for (int currPos = 0; currPos < line.length; currPos++) {
-            if (line[currPos] != WILD_CODE && line[currPos] != targetSymbol) {
-                return currPos;
-            }
-        }
-        return line.length;
-    }
 
     public int[][] spin() {
         int[][] slot = new int[REELS][ROWS];
@@ -120,16 +88,48 @@ public class SlotEngine {
         for (int[] payLine : payLines) {
             int[] line = new int[payLine.length];
 
-            line[0] = slot[0][payLine[0]];
-            line[1] = slot[1][payLine[1]];
-            line[2] = slot[2][payLine[2]];
+            for (int currPos = 0; currPos < payLine.length; currPos++) {
+                line[currPos] = slot[currPos][payLine[currPos]];
+            }
 
-            int targetSymbol = getTargetSymbol(line);
-            int seqLength = getSequenceLength(line, targetSymbol);
+            int targetSymbol = getLineTargetSymbol(line);
+            int seqLength = getLineSequenceLength(line, targetSymbol);
 
             pay += PAY_TABLE.get(targetSymbol)[seqLength - 1];
         }
 
         return pay;
+    }
+
+    public void printSlot(int[][] slot) {
+        for (int currReel = 0; currReel < REELS; currReel++) {
+            System.out.print("Reel " + currReel + ": ");
+            for (int j = 0; j < ROWS; j++) {
+                System.out.print(slot[currReel][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    private int getLineTargetSymbol(int[] line) {
+        for (int symbol : line) {
+            if (symbol != WILD_CODE) {
+                return symbol;
+            }
+        }
+        return WILD_CODE;
+    }
+
+    private int getLineSequenceLength(int[] line, int targetSymbol) {
+        if (targetSymbol == WILD_CODE) {
+            return line.length;
+        }
+
+        for (int currPos = 0; currPos < line.length; currPos++) {
+            if (line[currPos] != WILD_CODE && line[currPos] != targetSymbol) {
+                return currPos;
+            }
+        }
+        return line.length;
     }
 }

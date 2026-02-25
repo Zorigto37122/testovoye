@@ -12,7 +12,7 @@ public class MathTest {
         long count = 0;
         SlotEngine eng = new SlotEngine();
 
-        for (int i = 0; i < iterations; i++) {
+        while (count < iterations) {
             count += 1;
             totalBet += 5;
             int currWin = eng.calculatePay(eng.spin());
@@ -30,7 +30,7 @@ public class MathTest {
         System.out.println("Total Win: " + totalWin);
         System.out.println("Hit Rate: " + String.format("%.4f", (double) totalWinCount / iterations * 100) + "%");
         System.out.println("Return to Player (RTP): " + String.format("%.4f", averageRTP) + "%");
-        System.out.println("SD of RTP: " + String.format("%.4f", Math.sqrt(RTPm2 / (count - 1))) + "%");
+        System.out.println("SD (Standard Deviation) of RTP: " + String.format("%.4f", Math.sqrt(RTPm2 / (count - 1))) + "%");
     }
 
     @Test

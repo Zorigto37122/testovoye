@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(JUnitParamsRunner.class)
 public class SlotEngineParamsTest {
-    private static Object[] testPaylinesValues() {
+    private static Object[] testSlotValues() {
         return new Object[] {
                 new Object[] {new int[][]{
                         {4, 9, 9},
@@ -35,13 +35,17 @@ public class SlotEngineParamsTest {
                         {9, 1, 9},
                         {9, 9, 1}
                 }, 26, "Payline #5 got wrong"},
-
+                new Object[] {new int[][]{
+                        {9, 9, 9},
+                        {9, 9, 9},
+                        {9, 9, 9}
+                }, 0, "No payout"},
         };
     }
 
     @Test
-    @Parameters(method = "testPaylinesValues")
-    public void testPaylines(int[][] slot, int exp, String message) {
+    @Parameters(method = "testSlotValues")
+    public void testCalculatePay(int[][] slot, int exp, String message) {
         SlotEngine engine = new SlotEngine();
         Assert.assertEquals(message, exp, engine.calculatePay(slot));
     }
