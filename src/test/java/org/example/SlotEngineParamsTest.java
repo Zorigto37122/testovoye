@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitParamsRunner.class)
-public class TestSlotEngineParams {
+public class SlotEngineParamsTest {
     private static Object[] testPaylinesValues() {
         return new Object[] {
                 new Object[] {new int[][]{

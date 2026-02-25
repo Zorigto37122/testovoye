@@ -5,10 +5,11 @@ import java.util.Map;
 import java.util.Random;
 
 public class SlotEngine {
-    private static final int NUMBER_OF_LINES = 5;
     private static final int REELS = 3;
     private static final int ROWS = 3;
     private static final int WILD_CODE = 0;
+
+    private static final Random RANDOM = new Random();
 
     private static final int[][] REEL_STRIPS = {
             {
@@ -98,23 +99,15 @@ public class SlotEngine {
 
     public int[][] spin() {
         int[][] slot = new int[REELS][ROWS];
-        int reelLen = REEL_STRIPS[0].length;
-        Random random = new Random();
 
-        for (int currReel = 0; currReel < 3; currReel++) {
-            int randomReelPos = random.nextInt(reelLen);
+        for (int currReel = 0; currReel < REELS; currReel++) {
+            int[] strip = REEL_STRIPS[currReel];
+            int len = strip.length;
+            int centerPos = RANDOM.nextInt(len);
 
-            slot[currReel][1] = REEL_STRIPS[currReel][randomReelPos];
-
-            if (randomReelPos > 0 && randomReelPos < reelLen - 1) {
-                slot[currReel][0] = REEL_STRIPS[currReel][randomReelPos - 1];
-                slot[currReel][2] = REEL_STRIPS[currReel][randomReelPos + 1];
-            } else if (randomReelPos == 0) {
-                slot[currReel][0] = REEL_STRIPS[currReel][reelLen - 1];
-                slot[currReel][2] = REEL_STRIPS[currReel][randomReelPos + 1];
-            } else {
-                slot[currReel][0] = REEL_STRIPS[currReel][randomReelPos - 1];
-                slot[currReel][2] = REEL_STRIPS[currReel][0];
+            for (int offset = 0; offset < ROWS; offset++) {
+                int index = (centerPos + offset - 1 + len) % len;
+                slot[currReel][offset] = strip[index];
             }
         }
 
