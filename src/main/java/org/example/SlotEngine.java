@@ -104,8 +104,8 @@ public class SlotEngine {
     public void printSlot(int[][] slot) {
         for (int currReel = 0; currReel < REELS; currReel++) {
             System.out.print("Reel " + currReel + ": ");
-            for (int j = 0; j < ROWS; j++) {
-                System.out.print(slot[currReel][j] + " ");
+            for (int currRow = 0; currRow < ROWS; currRow++) {
+                System.out.print(slot[currReel][currRow] + " ");
             }
             System.out.println();
         }
