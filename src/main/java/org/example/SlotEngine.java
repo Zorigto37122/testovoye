@@ -44,7 +44,7 @@ public class SlotEngine {
             }
     };
 
-    private static final int[][] payLines = {
+    private static final int[][] PAY_LINES = {
             {0, 0, 0},
             {1, 1, 1},
             {2, 2, 2},
@@ -85,7 +85,7 @@ public class SlotEngine {
     public int calculatePay(int[][] slot) {
         int pay = 0;
 
-        for (int[] payLine : payLines) {
+        for (int[] payLine : PAY_LINES) {
             int[] line = new int[payLine.length];
 
             for (int currPos = 0; currPos < payLine.length; currPos++) {
